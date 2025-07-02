@@ -12,6 +12,7 @@
     "@faker-js/faker": "^9.8.0",
     "@reduxjs/toolkit": "^2.8.2",
     "aos": "^2.3.4",
+    "axios": "^1.10.0",
     "bootstrap": "^5.3.6",
     "chart.js": "^4.4.9",
     "google-map-react": "^2.2.5",
