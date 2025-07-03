@@ -2,7 +2,7 @@ import Header from "./Header";
 import Hero12 from "../hero/hero-12";
 import Footer from "./Footer";
 import Subscribe from "../call-to-action/subcribe-box/Subscribe";
-import Blog4 from "../../components/blog/Blog4";
+import Blog4 from "../blog/Blog4";
 import Testimonial6 from "../testimonial/Testimonial6";
 import Candidates3 from "../candidates/Candidates3";
 import Block9 from "../block/Block9";

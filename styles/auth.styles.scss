@@ -1,0 +1,8 @@
+.no-caret::after {
+  display: none !important;
+}
+
+.dropdown-item.logout{
+  margin-left: 20px !important;
+  cursor: pointer;
+}

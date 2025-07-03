@@ -1,36 +1,35 @@
-
-'use client'
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import HeaderNavContent from "./HeaderNavContent";
 import Image from "next/image";
 
+
 const DefaulHeader2 = () => {
   const [navbar, setNavbar] = useState(false);
+  const { token, role } = useSelector((state) => state.auth);
 
+  if (token) {
+    console.log("User is logged in as:", role); // JOBSEEKER or EMPLOYER etc.
+  }
   const changeBackground = () => {
-    if (window.scrollY >= 10) {
-      setNavbar(true);
-    } else {
-      setNavbar(false);
-    }
+    setNavbar(window.scrollY >= 10);
   };
 
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
+    return () => window.removeEventListener("scroll", changeBackground);
   }, []);
 
   return (
-    // <!-- Main Header-->
     <header
-      className={`main-header  ${
+      className={`main-header ${
         navbar ? "fixed-header animated slideInDown" : ""
       }`}
     >
-      {/* <!-- Main box --> */}
       <div className="main-box">
-        {/* <!--Nav Outer --> */}
         <div className="nav-outer">
           <div className="logo-box">
             <div className="logo">
@@ -44,34 +43,57 @@ const DefaulHeader2 = () => {
               </Link>
             </div>
           </div>
-          {/* End .logo-box */}
-
           <HeaderNavContent />
-          {/* <!-- Main Menu End--> */}
         </div>
-        {/* End .nav-outer */}
 
         <div className="outer-box">
-          {/* <!-- Add Listing --> */}
           <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
             Upload your CV
           </Link>
-          {/* <!-- Login/Register --> */}
+
           <div className="btn-box">
-            <a
-              href="#"
-              className="theme-btn btn-style-three call-modal"
-              data-bs-toggle="modal"
-              data-bs-target="#loginPopupModal"
-            >
-              Login / Register
-            </a>
-            <Link
-              href="/employers-dashboard/post-jobs"
-              className="theme-btn btn-style-one"
-            >
-              Job Post
-            </Link>
+            {token ? (
+              <div class="dropdown ms-3">
+                <div
+                  class="dropdown-toggle d-flex align-items-center no-caret "
+                  data-bs-toggle="dropdown"
+                >
+                  <i
+                    className="la la-user-circle"
+                    style={{ fontSize: "30px" }}
+                  ></i>{" "}
+                </div>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="/profile">
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <div class="dropdown-item logout" onClick={() => {}}>
+                      Logout
+                    </div>
+                  </li>
+                 
+                </ul>
+              </div>
+            ) : (
+              <>
+                <a
+                  href="/register"
+                  className="theme-btn btn-style-three call-modal"
+                >
+                  Login / Register
+                </a>
+
+                <Link
+                  href="/employers-dashboard/post-jobs"
+                  className="theme-btn btn-style-one"
+                >
+                  Job Post
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -80,3 +102,4 @@ const DefaulHeader2 = () => {
 };
 
 export default DefaulHeader2;
+
