@@ -7,7 +7,7 @@ import About6 from "../about/About6";
 import About7 from "../about/About7";
 import About8 from "../about/About8";
 import JobFeatured8 from "../job-featured/JobFeatured8";
-import Blog4 from "../../components/blog/Blog4";
+import Blog4 from "../blog/Blog4";
 import CallToAction11 from "../call-to-action/CallToAction11";
 import Pricing3 from "../pricing/Pricing3";
 import Funfact from "../fun-fact-counter/Funfact";

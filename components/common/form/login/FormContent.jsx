@@ -1,18 +1,62 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LoginWithSocial from "./LoginWithSocial";
+import { login } from "@/features/auth/authSlice";
 
 const FormContent = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const { token, loading, error } = useSelector((state) => state.auth);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (token) {
+      router.push("/"); // or wherever you want to redirect
+    }
+  }, [token]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(login(formData)).unwrap();
+      router.push("/");
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
+
   return (
     <div className="form-inner">
       <h3>Login to Superio</h3>
 
-      {/* <!--Login Form--> */}
-      <form method="post">
+      <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Username</label>
-          <input type="text" name="username" placeholder="Username" required />
+          <label>Email</label>
+          <input
+            type="text"
+            name="email"
+            placeholder="john@example.com"
+            required
+            value={formData.email}
+            onChange={handleChange}
+          />
         </div>
-        {/* name */}
 
         <div className="form-group">
           <label>Password</label>
@@ -21,9 +65,10 @@ const FormContent = () => {
             name="password"
             placeholder="Password"
             required
+            value={formData.password}
+            onChange={handleChange}
           />
         </div>
-        {/* password */}
 
         <div className="form-group">
           <div className="field-outer">
@@ -38,29 +83,27 @@ const FormContent = () => {
             </a>
           </div>
         </div>
-        {/* forgot password */}
+
+        {error && <p className="text-danger">{error}</p>}
 
         <div className="form-group">
           <button
             className="theme-btn btn-style-one"
             type="submit"
             name="log-in"
+            disabled={loading}
           >
-            Log In
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </div>
-        {/* login */}
       </form>
-      {/* End form */}
 
       <div className="bottom-box">
         <div className="text">
           Don&apos;t have an account?{" "}
           <Link
-            href="#"
+            href="/register"
             className="call-modal signup"
-            data-bs-toggle="modal"
-            data-bs-target="#registerModal"
           >
             Signup
           </Link>
@@ -72,7 +115,6 @@ const FormContent = () => {
 
         <LoginWithSocial />
       </div>
-      {/* End bottom-box LoginWithSocial */}
     </div>
   );
 };

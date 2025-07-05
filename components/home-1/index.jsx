@@ -3,7 +3,6 @@ import About from "../about/About";
 import AppSection from "../app-section/AppSection";
 import Blog from "../blog/Blog";
 import CallToAction from "../call-to-action/CallToAction";
-import LoginPopup from "../common/form/login/LoginPopup";
 import Partner from "../common/partner/Partner";
 import FooterDefault from "../footer/common-footer";
 import Funfact from "../fun-fact-counter/Funfact";
@@ -17,8 +16,7 @@ import Testimonial from "../testimonial/Testimonial";
 const index = () => {
   return (
     <>
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+   
 
       <DefaulHeader2 />
       {/* End Header with upload cv btn */}
