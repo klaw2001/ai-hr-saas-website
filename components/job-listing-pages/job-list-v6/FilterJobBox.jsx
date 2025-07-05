@@ -19,6 +19,7 @@ import {
   addSort,
 } from "../../../features/filter/filterSlice";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const FilterJobBox = () => {
   const { jobList, jobSort } = useSelector((state) => state.filter);
@@ -33,9 +34,17 @@ const FilterJobBox = () => {
     salary,
   } = jobList || {};
 
+  const fetchJobs = async () => {
+    const response = await fetch("http://localhost:8000/api/jobs/all-jobs");
+    const data = await response.json();
+  };
+
   const { sort, perPage } = jobSort;
 
   const dispatch = useDispatch();
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
   // keyword filter on title
   const keywordFilter = (item) =>
