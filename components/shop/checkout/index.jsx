@@ -1,7 +1,7 @@
 import LoginPopup from "../../common/form/login/LoginPopup";
 import FooterDefault from "../../footer/common-footer";
 import MobileMenu from "../../header/MobileMenu";
-import Breadcrumb from "../../../components/shop/Breadcrumb";
+import Breadcrumb from "../Breadcrumb";
 import BillingAll from "./components";
 import ShopHeader from "../../header/ShopHeader";
 
