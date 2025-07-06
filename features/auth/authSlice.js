@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API = 'http://localhost:5000/api'; // your backend URL
+const API = 'http://localhost:8000/api'; // your backend URL
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -20,7 +20,7 @@ export const login = createAsyncThunk(
   "auth/login",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+      const res = await axios.post(`${API}/auth/login`, formData);
 
       // Check for your backend structure
       if (res.data.status && res.data.data.token) {

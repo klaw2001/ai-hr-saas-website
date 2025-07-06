@@ -1,24 +1,20 @@
-import FooterDefault from "../../footer/common-footer";
 import Breadcrumb from "../../common/Breadcrumb";
-import LoginPopup from "../../common/form/login/LoginPopup";
-import DefaulHeader2 from "../../header/DefaulHeader2";
-import MobileMenu from "../../header/MobileMenu";
+
 import FilterJobsBox from "./FilterJobsBox";
 import FilterSidebar from "./FilterSidebar";
 
-const index = () => {
+const JobListingPage = () => {
   return (
     <>
       {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
+      {/* <span className="header-span"></span> */}
 
-      <LoginPopup />
+      {/* <LoginPopup /> */}
       {/* End Login Popup Modal */}
 
-      <DefaulHeader2 />
+      {/* <DefaulHeader2 /> */}
       {/* End Header with upload cv btn */}
 
-      <MobileMenu />
       {/* End MobileMenu */}
 
       <Breadcrumb title="Find Jobs" meta="Jobs" />
@@ -58,10 +54,9 @@ const index = () => {
       </section>
       {/* <!--End Listing Page Section --> */}
 
-      <FooterDefault footerStyle="alternate5" />
       {/* <!-- End Main Footer --> */}
     </>
   );
 };
 
-export default index;
+export default JobListingPage;

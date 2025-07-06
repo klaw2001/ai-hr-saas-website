@@ -1,30 +1,30 @@
-"use client";
+// "use client";
 
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Wrapper from "@/layout/Wrapper";
-import Home from "@/components/home-1";
 import { loginSuccess } from "@/features/auth/authSlice";
+import MainHomePage from "./(home)/main-home/page";
 
 export const metadata = {
   title: "Ai Hr Saas",
   description: "Superio - Job Borad React NextJS Template",
 };
 export default function Page() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const role = localStorage.getItem("role");
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   const role = localStorage.getItem("role");
 
-    if (token && role) {
-      dispatch(loginSuccess({ token, role }));
-    }
-  }, []);
+  //   if (token && role) {
+  //     dispatch(loginSuccess({ token, role }));
+  //   }
+  // }, []);
 
   return (
     <Wrapper>
-      <Home />
+      <MainHomePage />
     </Wrapper>
   );
 }

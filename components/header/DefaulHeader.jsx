@@ -1,13 +1,13 @@
-
-'use client'
-
+"use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import HeaderNavContent from "./HeaderNavContent";
 import Image from "next/image";
+import ProfileIcon from "../common/ProfileIcon";
 
 const DefaulHeader = () => {
   const [navbar, setNavbar] = useState(false);
+  const [token, setToken] = useState(null);
 
   const changeBackground = () => {
     if (window.scrollY >= 10) {
@@ -19,6 +19,9 @@ const DefaulHeader = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
+    setToken(
+      typeof window !== "undefined" ? localStorage.getItem("token") : null
+    );
   }, []);
 
   return (
@@ -54,20 +57,23 @@ const DefaulHeader = () => {
         <div className="outer-box">
           {/* <!-- Login/Register --> */}
           <div className="btn-box">
-            <a
-              href="#"
-              className="theme-btn btn-style-three call-modal"
-              data-bs-toggle="modal"
-              data-bs-target="#loginPopupModal"
-            >
-              Login / Register
-            </a>
-            <Link
-              href="/employers-dashboard/post-jobs"
-              className="theme-btn btn-style-one"
-            >
-              Job Post
-            </Link>
+            {token ? (
+              <Link href="/profile" className="profile-icon-link">
+                <ProfileIcon style={{ fontSize: 32 }} />
+              </Link>
+            ) : (
+              <>
+                <Link href={"/login"} className="theme-btn btn-style-three">
+                  Login / Register
+                </Link>
+                <Link
+                  href="/employers-dashboard/post-jobs"
+                  className="theme-btn btn-style-one"
+                >
+                  Job Post
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
