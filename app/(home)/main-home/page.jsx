@@ -1,15 +1,16 @@
-import DefaulHeader from "@/components/header/DefaulHeader";
+
 import HeroTeal from "@/components/hero/main-home/HeroTeal";
-import MobileMenu from "@/components/header/MobileMenu";
+import ResumeAiSection from "@/components/main-home/ResumeAiSection";
+import MainWrapper from "@/layout/MainWrapper";
 
 export default function MainHomePage() {
   return (
     <>
-      <DefaulHeader />
+      <MainWrapper>
+        <HeroTeal />
+        <ResumeAiSection />
+      </MainWrapper>
 
-      <MobileMenu />
-
-      <HeroTeal />
     </>
   );
 }
