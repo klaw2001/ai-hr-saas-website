@@ -6,7 +6,7 @@ import Wrapper from "@/layout/Wrapper";
 import Home from "@/components/home-1";
 import { loginSuccess } from "@/features/auth/authSlice";
 
-export const metadata = {
+ const metadata = {
   title: "Ai Hr Saas",
   description: "Superio - Job Borad React NextJS Template",
 };

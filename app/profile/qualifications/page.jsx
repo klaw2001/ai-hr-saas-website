@@ -1,9 +1,21 @@
-import React from 'react'
+"use client";
+
+import React from "react";
+
+const QualificationItem = () => {
+  return <div>Qualification</div>;
+};
 
 const QualificationsPage = () => {
   return (
-    <div>QualificationsPage</div>
-  )
-}
+    <div className="qualifications-container mt-5">
+      <div>
+        <h3>Qualifications</h3>
+      </div>
 
-export default QualificationsPage
+      <QualificationItem />
+    </div>
+  );
+};
+
+export default QualificationsPage;
