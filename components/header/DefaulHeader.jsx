@@ -12,6 +12,7 @@ const DefaulHeader = () => {
   const [navbar, setNavbar] = useState(false);
   const [token, setToken] = useState(null);
 
+  const pathname = usePathname();
   const changeBackground = () => {
     if (window.scrollY >= 10) {
       setNavbar(true);
@@ -30,8 +31,9 @@ const DefaulHeader = () => {
   return (
     // <!-- Main Header-->
     <header
-      className={`main-header  ${navbar ? "fixed-header animated slideInDown" : ""
-        }`}
+      className={`main-header  ${
+        navbar ? "fixed-header animated slideInDown" : ""
+      }`}
     >
       {/* <!-- Main box --> */}
       <div className="main-box">
@@ -64,12 +66,10 @@ const DefaulHeader = () => {
               //   <ProfileIcon style={{ fontSize: 32 }} />
               // </Link>
 
-              <div className="dropdown dashboard-option">
-                <a
-                  className="dropdown-toggle"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+              <div className="dropdown dashboard-option ">
+                <Link
+                  href="/candidates-dashboard/dashboard"
+                  className="d-flex align-items-center"
                 >
                   <Image
                     alt="avatar"
@@ -79,39 +79,7 @@ const DefaulHeader = () => {
                     height={50}
                   />
                   <span className="name">My Account</span>
-                </a>
-
-                <ul className="dropdown-menu">
-                  {candidatesMenuData.map((item) => (
-                    <li
-                      className={`${isActiveLink(
-                        item.routePath,
-                        usePathname()
-                      )
-                          ? "active"
-                          : ""
-                        } mb-1`}
-                      key={item.id}
-                    >
-                      <Link
-                        href={item.routePath}
-                        onClick={() => {
-                          if (
-                            item.routePath === "/login" ||
-                            item.routePath === "login"
-                          ) {
-                            localStorage.removeItem("token");
-                          }
-                        }}
-                      >
-                        <i
-                          className={`la ${item.icon}`}
-                        ></i>{" "}
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                </Link>
               </div>
             ) : (
               <>

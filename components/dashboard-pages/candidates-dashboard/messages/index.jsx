@@ -21,14 +21,7 @@ const Index = () => {
       <span className="header-span"></span>
       {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
-
       <DashboardCandidatesHeader />
-      {/* End Header */}
-
-      <MobileMenu />
-      {/* End MobileMenu */}
 
       <DashboardCandidatesSidebar />
       {/* <!-- End Candidates Sidebar Menu --> */}

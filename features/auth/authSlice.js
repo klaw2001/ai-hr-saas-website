@@ -10,7 +10,7 @@ export const register = createAsyncThunk(
       const res = await axios.post(`${API}/auth/register`, userData);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message || 'Register failed');
+      return rejectWithValue(err.message || 'Register failed');
     }
   }
 );

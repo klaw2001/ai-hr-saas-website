@@ -1,9 +1,7 @@
-
-
 'use client'
 
 import Link from "next/link";
-import jobs from "../../../data/job-featured";
+// import jobs from "../../../data/job-featured";
 import ListingShowing from "../components/ListingShowing";
 import JobSelect from "../components/JobSelect";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,10 +17,14 @@ import {
   addSort,
 } from "../../../features/filter/filterSlice";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import JobServices from "@/apiServices/JobServices";
+import { toast } from "react-toastify";
+import JobseekerServices from "@/apiServices/JobseekerServices";
 
 const FilterJobBox = () => {
-  const { jobList, jobSort } = useSelector((state) => state.filter);
+  const { jobSort } = useSelector((state) => state.filter);
+  const [jobList, setJobList] = useState([]);
   const {
     keyword,
     location,
@@ -33,11 +35,32 @@ const FilterJobBox = () => {
     experienceSelect,
     salary,
   } = jobList || {};
-
+  
   const fetchJobs = async () => {
-    const response = await fetch("http://localhost:8000/api/jobs/all-jobs");
-    const data = await response.json();
+    const response = await JobServices.getJobs()
+    if(response.data.status){
+      setJobList(response.data.data);
+    }
   };
+
+  const jobs = jobList
+
+
+  async function shortlistJob(job_id) {
+    try {
+      const response = await JobseekerServices.shortlistJob({
+        job_id
+      });
+      if (response.data.status) {
+        toast.success("Job shortlisted successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to shortlist job.");
+      }
+    } catch (error) {
+      toast.error("Failed to shortlist job. Please try again.");
+      console.error("Error shortlisting job:", error);
+    }
+  }
 
   const { sort, perPage } = jobSort;
 
@@ -105,16 +128,16 @@ const FilterJobBox = () => {
     sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
   let content = jobs
-    ?.filter(keywordFilter)
-    ?.filter(locationFilter)
-    ?.filter(destinationFilter)
-    ?.filter(categoryFilter)
-    ?.filter(jobTypeFilter)
-    ?.filter(datePostedFilter)
-    ?.filter(experienceFilter)
-    ?.filter(salaryFilter)
-    ?.sort(sortFilter)
-    .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16)
+    // ?.filter(keywordFilter)
+    // ?.filter(locationFilter)
+    // ?.filter(destinationFilter)
+    // ?.filter(categoryFilter)
+    // ?.filter(jobTypeFilter)
+    // ?.filter(datePostedFilter)
+    // ?.filter(experienceFilter)
+    // ?.filter(salaryFilter)
+    // ?.sort(sortFilter)
+    // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16)
     ?.map((item) => (
       <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
         <div className="inner-box">
@@ -123,46 +146,51 @@ const FilterJobBox = () => {
               <Image width={50} height={49} src={item.logo} alt="item brand" />
             </span>
             <h4>
-              <Link href={`/job-single-v1/${item.id}`}>{item.jobTitle}</Link>
+              <Link href={`/job-single-v1/${item.id}`}>{item.job_title}</Link>
             </h4>
 
             <ul className="job-info">
               <li>
                 <span className="icon flaticon-briefcase"></span>
-                {item.company}
+                {item.company_name}
               </li>
               {/* compnay info */}
               <li>
                 <span className="icon flaticon-map-locator"></span>
-                {item.location}
+                {item.job_location}
               </li>
               {/* location info */}
               <li>
-                <span className="icon flaticon-clock-3"></span> {item.time}
+                <span className="icon flaticon-clock-3"></span> {item.created_at}
               </li>
-              {/* time info */}
-              <li>
-                <span className="icon flaticon-money"></span> {item.salary}
-              </li>
+              {/* time info  */}
+
+              {item.job_salary !== '' && (
+                <li>
+                  <span className="icon flaticon-money"></span> {item.job_salary}
+                </li>
+              )}
               {/* salary info */}
-            </ul>
-            {/* End .job-info */}
+              </ul>
+              {/* End .job-info */}
 
             <ul className="job-other-info">
-              {item?.jobType?.map((val, i) => (
+              {/* {item?.jobType?.map((val, i) => (
                 <li key={i} className={`${val.styleClass}`}>
                   {val.type}
                 </li>
-              ))}
+              ))} */}
+              <li className="time">{item.employment_type}</li>
+              <li className="privacy">{item.job_seniority}</li>
             </ul>
-            {/* End .job-other-info */}
+            {/* End .job-other-info  */}
 
-            <button className="bookmark-btn">
-              <span className="flaticon-bookmark"></span>
-            </button>
-          </div>
-        </div>
-      </div>
+                  <button className="bookmark-btn" onClick={() => shortlistJob(item.job_id)}>
+                    <span className={item.jobs_shortlisted && item.jobs_shortlisted.length ? "flaticon-bookmark-filled" : "flaticon-bookmark"}></span>
+                  </button>
+                  </div>
+                </div>
+                </div>
       // End all jobs
     ));
 
@@ -189,6 +217,8 @@ const FilterJobBox = () => {
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 0 }));
   };
+
+  
   return (
     <>
       <div className="ls-switcher">
