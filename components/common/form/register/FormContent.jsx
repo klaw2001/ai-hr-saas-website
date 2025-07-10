@@ -28,7 +28,9 @@ const FormContent = ({ role }) => {
     try {
       const result = await dispatch(register(form)).unwrap();
       if (result?.data.token) {
-        router.push('/home');
+        router.push('/');
+
+        localStorage.setItem('token', result?.data.token);
       }
     } catch (err) {
       console.error("Registration failed", err);
