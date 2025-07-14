@@ -1,8 +1,8 @@
 import Api from "./Api";
 
 export default {
-  getJobs: async (params) => {
-    const response = await Api.get("/jobs", { params });
+  getJobs: async (queryString = '') => {
+    const response = await Api.get(`/jobs${queryString}`);
     return response;
   },
 };

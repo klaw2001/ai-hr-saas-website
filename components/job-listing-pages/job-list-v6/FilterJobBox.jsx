@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import JobServices from "@/apiServices/JobServices";
 import { toast } from "react-toastify";
 import JobseekerServices from "@/apiServices/JobseekerServices";
+import JobSearchForm from "./JobSearchForm";
 
 const FilterJobBox = () => {
   const { jobSort } = useSelector((state) => state.filter);
@@ -36,8 +37,25 @@ const FilterJobBox = () => {
     salary,
   } = jobList || {};
   
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+    if (keyword) params.append('keyword', keyword);
+    if (location) params.append('location', location);
+    if (category) params.append('category', category);
+    if (jobTypeSelect) params.append('jobType', jobTypeSelect);
+    if (datePosted) params.append('datePosted', datePosted);
+    if (experienceSelect) params.append('experience', experienceSelect);
+    if (salary?.min !== undefined) params.append('salaryMin', salary.min);
+    if (salary?.max !== undefined) params.append('salaryMax', salary.max);
+    if (sort) params.append('sort', sort);
+    if (perPage.start !== undefined) params.append('start', perPage.start);
+    if (perPage.end !== undefined) params.append('end', perPage.end);
+    return params.toString();
+  };
+
   const fetchJobs = async () => {
-    const response = await JobServices.getJobs()
+    const queryString = buildQueryParams();
+    const response = await JobServices.getJobs(queryString ? `?${queryString}` : '');
     if(response.data.status){
       setJobList(response.data.data);
     }
@@ -67,132 +85,7 @@ const FilterJobBox = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     fetchJobs();
-  }, []);
-
-  // keyword filter on title
-  const keywordFilter = (item) =>
-    keyword !== ""
-      ? item.jobTitle.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
-      : item;
-
-  // location filter
-  const locationFilter = (item) =>
-    location !== ""
-      ? item?.location
-          ?.toLocaleLowerCase()
-          .includes(location?.toLocaleLowerCase())
-      : item;
-
-  // location filter
-  const destinationFilter = (item) =>
-    item?.destination?.min >= destination?.min &&
-    item?.destination?.max <= destination?.max;
-
-  // category filter
-  const categoryFilter = (item) =>
-    category !== ""
-      ? item?.category?.toLocaleLowerCase() === category?.toLocaleLowerCase()
-      : item;
-
-  // job-type filter
-  const jobTypeFilter = (item) =>
-    item.jobType !== undefined && jobTypeSelect !== ""
-      ? item?.jobType[0]?.type.toLocaleLowerCase().split(" ").join("-") ===
-          jobTypeSelect && item
-      : item;
-
-  // date-posted filter
-  const datePostedFilter = (item) =>
-    datePosted !== "all" && datePosted !== ""
-      ? item?.created_at
-          ?.toLocaleLowerCase()
-          .split(" ")
-          .join("-")
-          .includes(datePosted)
-      : item;
-
-  // experience level filter
-  const experienceFilter = (item) =>
-    experienceSelect !== ""
-      ? item?.experience?.split(" ").join("-").toLocaleLowerCase() ===
-          experienceSelect && item
-      : item;
-
-  // salary filter
-  const salaryFilter = (item) =>
-    item?.totalSalary?.min >= salary?.min &&
-    item?.totalSalary?.max <= salary?.max;
-
-  // sort filter
-  const sortFilter = (a, b) =>
-    sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
-
-  let content = jobs
-    // ?.filter(keywordFilter)
-    // ?.filter(locationFilter)
-    // ?.filter(destinationFilter)
-    // ?.filter(categoryFilter)
-    // ?.filter(jobTypeFilter)
-    // ?.filter(datePostedFilter)
-    // ?.filter(experienceFilter)
-    // ?.filter(salaryFilter)
-    // ?.sort(sortFilter)
-    // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 16)
-    ?.map((item) => (
-      <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
-        <div className="inner-box">
-          <div className="content">
-            <span className="company-logo">
-              <Image width={50} height={49} src={item.logo} alt="item brand" />
-            </span>
-            <h4>
-              <Link href={`/job-single-v1/${item.id}`}>{item.job_title}</Link>
-            </h4>
-
-            <ul className="job-info">
-              <li>
-                <span className="icon flaticon-briefcase"></span>
-                {item.company_name}
-              </li>
-              {/* compnay info */}
-              <li>
-                <span className="icon flaticon-map-locator"></span>
-                {item.job_location}
-              </li>
-              {/* location info */}
-              <li>
-                <span className="icon flaticon-clock-3"></span> {item.created_at}
-              </li>
-              {/* time info  */}
-
-              {item.job_salary !== '' && (
-                <li>
-                  <span className="icon flaticon-money"></span> {item.job_salary}
-                </li>
-              )}
-              {/* salary info */}
-              </ul>
-              {/* End .job-info */}
-
-            <ul className="job-other-info">
-              {/* {item?.jobType?.map((val, i) => (
-                <li key={i} className={`${val.styleClass}`}>
-                  {val.type}
-                </li>
-              ))} */}
-              <li className="time">{item.employment_type}</li>
-              <li className="privacy">{item.job_seniority}</li>
-            </ul>
-            {/* End .job-other-info  */}
-
-                  <button className="bookmark-btn" onClick={() => shortlistJob(item.job_id)}>
-                    <span className={item.jobs_shortlisted && item.jobs_shortlisted.length ? "flaticon-bookmark-filled" : "flaticon-bookmark"}></span>
-                  </button>
-                  </div>
-                </div>
-                </div>
-      // End all jobs
-    ));
+  }, [keyword, location, category, jobTypeSelect, datePosted, experienceSelect, salary, sort, perPage]);
 
   // sort handler
   const sortHandler = (e) => {
@@ -221,10 +114,11 @@ const FilterJobBox = () => {
   
   return (
     <>
+      <JobSearchForm onFindJobs={fetchJobs} />
       <div className="ls-switcher">
         <div className="showing-result">
           <div className="text">
-            <strong>{content?.length}</strong> jobs
+            <strong>{jobs.length}</strong> jobs
           </div>
         </div>
         {/* End .showing-result */}
@@ -305,7 +199,47 @@ const FilterJobBox = () => {
       </div>
       {/* <!-- ls Switcher --> */}
 
-      <div className="row">{content}</div>
+      <div className="row">
+        {jobs?.map((item) => (
+          <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id}>
+            <div className="inner-box">
+              <div className="content">
+                <span className="company-logo">
+                  <Image width={50} height={49} src={item.logo} alt="item brand" />
+                </span>
+                <h4>
+                  <Link href={`/job-single-v1/${item.id}`}>{item.job_title}</Link>
+                </h4>
+                <ul className="job-info">
+                  <li>
+                    <span className="icon flaticon-briefcase"></span>
+                    {item.company_name}
+                  </li>
+                  <li>
+                    <span className="icon flaticon-map-locator"></span>
+                    {item.job_location}
+                  </li>
+                  <li>
+                    <span className="icon flaticon-clock-3"></span> {item.created_at}
+                  </li>
+                  {item.job_salary !== '' && (
+                    <li>
+                      <span className="icon flaticon-money"></span> {item.job_salary}
+                    </li>
+                  )}
+                </ul>
+                <ul className="job-other-info">
+                  <li className="time">{item.employment_type}</li>
+                  <li className="privacy">{item.job_seniority}</li>
+                </ul>
+                <button className="bookmark-btn" onClick={() => shortlistJob(item.job_id)}>
+                  <span className={item.jobs_shortlisted && item.jobs_shortlisted.length ? "flaticon-bookmark-filled" : "flaticon-bookmark"}></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
       {/* End .row with jobs */}
 
       <ListingShowing />

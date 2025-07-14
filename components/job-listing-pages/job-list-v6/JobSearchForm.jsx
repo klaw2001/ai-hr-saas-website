@@ -1,12 +1,17 @@
+'use client'
 import Categories from "../components/Categories";
 import JobSelect from "../components/JobSelect";
 import LocationBox from "../components/LocationBox";
 import SearchBox from "../components/SearchBox";
 
-const JobSearchForm = () => {
+const JobSearchForm = ({ onFindJobs }) => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (onFindJobs) onFindJobs();
+    };
     return (
         <>
-            <div className="job-search-form">
+            <form onSubmit={handleSubmit} className="job-search-form">
                 <div className="row">
                     <div className="form-group col-lg-4 col-md-12 col-sm-12">
                         <SearchBox />
@@ -33,7 +38,7 @@ const JobSearchForm = () => {
                     </div>
                     {/* <!-- Form Group --> */}
                 </div>
-            </div>
+            </form>
 
             <JobSelect />
         </>

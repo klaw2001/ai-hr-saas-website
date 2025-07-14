@@ -1,160 +1,352 @@
 
 'use client'
 
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
+import JobseekerServices from "@/apiServices/JobseekerServices";
+import { toast } from "react-toastify";
+
+const catOptions = [
+  { value: "Banking", label: "Banking" },
+  { value: "Digital & Creative", label: "Digital & Creative" },
+  { value: "Retail", label: "Retail" },
+  { value: "Human Resources", label: "Human Resources" },
+  { value: "Managemnet", label: "Managemnet" },
+  { value: "Accounting & Finance", label: "Accounting & Finance" },
+  { value: "Digital", label: "Digital" },
+  { value: "Creative Art", label: "Creative Art" },
+];
+
+const salaryOptions = [
+  { value: "40-70 K", label: "40-70 K" },
+  { value: "50-80 K", label: "50-80 K" },
+  { value: "60-90 K", label: "60-90 K" },
+  { value: "70-100 K", label: "70-100 K" },
+  { value: "100-150 K", label: "100-150 K" },
+  { value: "120-350 K", label: "120-350 K" },
+];
+
+const ageOptions = [
+  { value: "23 - 27 Years", label: "23 - 27 Years" },
+  { value: "24 - 28 Years", label: "24 - 28 Years" },
+  { value: "25 - 29 Years", label: "25 - 29 Years" },
+  { value: "26 - 30 Years", label: "26 - 30 Years" },
+];
+
+const allowOptions = [
+  { value: true, label: "Yes" },
+  { value: false, label: "No" },
+];
 
 const FormInfoBox = () => {
-  const catOptions = [
-    { value: "Banking", label: "Banking" },
-    { value: "Digital & Creative", label: "Digital & Creative" },
-    { value: "Retail", label: "Retail" },
-    { value: "Human Resources", label: "Human Resources" },
-    { value: "Managemnet", label: "Managemnet" },
-    { value: "Accounting & Finance", label: "Accounting & Finance" },
-    { value: "Digital", label: "Digital" },
-    { value: "Creative Art", label: "Creative Art" },
-  ];
+  const [form, setForm] = useState({
+    full_name: "",
+    job_title: "",
+    phone: "",
+    email: "",
+    website: "",
+    current_salary: "",
+    expected_salary: "",
+    experience: "",
+    age: "",
+    education_level: "",
+    languages: "",
+    categories: [],
+    allow_in_listing: true,
+    description: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const res = await JobseekerServices.getJobseekerProfile();
+        if (res.data?.status && res.data.data) {
+          const data = res.data.data;
+          setForm({
+            full_name: data.full_name || "",
+            job_title: data.job_title || "",
+            phone: data.phone || "",
+            email: data.email || "",
+            website: data.website || "",
+            current_salary: data.current_salary || "",
+            expected_salary: data.expected_salary || "",
+            experience: data.experience || "",
+            age: data.age || "",
+            education_level: data.education_level || "",
+            languages: data.languages || "",
+            categories: Array.isArray(data.categories)
+              ? data.categories.map((cat) =>
+                  catOptions.find((opt) => opt.value === cat) || { value: cat, label: cat }
+                )
+              : [],
+            allow_in_listing: data.allow_in_listing !== undefined ? data.allow_in_listing : true,
+            description: data.description || "",
+          });
+        }
+      } catch (err) {
+        toast.error("Failed to fetch profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCategoriesChange = (selected) => {
+    setForm((prev) => ({
+      ...prev,
+      categories: selected || [],
+    }));
+  };
+
+  const handleAllowChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      allow_in_listing: e.target.value === "true",
+    }));
+  };
+
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const payload = {
+        ...form,
+        categories: form.categories.map((cat) => cat.value),
+      };
+      const res = await JobseekerServices.updateJobseekerProfile(payload);
+      if (res.data?.success) {
+        toast.success("Profile updated successfully!");
+      } else {
+        toast.error(res.data?.message || "Failed to update profile");
+      }
+    } catch (err) {
+      toast.error("Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <form action="#" className="default-form">
+    <form className="default-form" onSubmit={handleSubmit}>
       <div className="row">
-        {/* <!-- Input --> */}
+        {/* Full Name */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Full Name</label>
-          <input type="text" name="name" placeholder="Jerome" required />
+          <input
+            type="text"
+            name="full_name"
+            value={form.full_name}
+            onChange={handleChange}
+            placeholder="Jerome"
+            required
+          />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Job Title */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Job Title</label>
-          <input type="text" name="name" placeholder="UI Designer" required />
+          <input
+            type="text"
+            name="job_title"
+            value={form.job_title}
+            onChange={handleChange}
+            placeholder="UI Designer"
+            required
+          />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Phone */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Phone</label>
           <input
             type="text"
-            name="name"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
             placeholder="0 123 456 7890"
             required
           />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Email */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Email address</label>
           <input
-            type="text"
-            name="name"
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
             placeholder="creativelayers"
             required
           />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Website */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Website</label>
           <input
             type="text"
-            name="name"
+            name="website"
+            value={form.website}
+            onChange={handleChange}
             placeholder="www.jerome.com"
+          />
+        </div>
+        {/* Current Salary */}
+        <div className="form-group col-lg-3 col-md-12">
+          <label>Current Salary($)</label>
+          <select
+            className="chosen-single form-select"
+            name="current_salary"
+            value={form.current_salary}
+            onChange={handleSelectChange}
+            required
+          >
+            <option value="">Select</option>
+            {salaryOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {/* Expected Salary */}
+        <div className="form-group col-lg-3 col-md-12">
+          <label>Expected Salary($)</label>
+          <select
+            className="chosen-single form-select"
+            name="expected_salary"
+            value={form.expected_salary}
+            onChange={handleSelectChange}
+            required
+          >
+            <option value="">Select</option>
+            {salaryOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {/* Experience */}
+        <div className="form-group col-lg-6 col-md-12">
+          <label>Experience</label>
+          <input
+            type="text"
+            name="experience"
+            value={form.experience}
+            onChange={handleChange}
+            placeholder="5-10 Years"
             required
           />
         </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-3 col-md-12">
-          <label>Current Salary($)</label>
-          <select className="chosen-single form-select" required>
-            <option>40-70 K</option>
-            <option>50-80 K</option>
-            <option>60-90 K</option>
-            <option>70-100 K</option>
-            <option>100-150 K</option>
-          </select>
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-3 col-md-12">
-          <label>Expected Salary($)</label>
-          <select className="chosen-single form-select" required>
-            <option>120-350 K</option>
-            <option>40-70 K</option>
-            <option>50-80 K</option>
-            <option>60-90 K</option>
-            <option>70-100 K</option>
-            <option>100-150 K</option>
-          </select>
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Experience</label>
-          <input type="text" name="name" placeholder="5-10 Years" required />
-        </div>
-
-        {/* <!-- Input --> */}
+        {/* Age */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Age</label>
-          <select className="chosen-single form-select" required>
-            <option>23 - 27 Years</option>
-            <option>24 - 28 Years</option>
-            <option>25 - 29 Years</option>
-            <option>26 - 30 Years</option>
+          <select
+            className="chosen-single form-select"
+            name="age"
+            value={form.age}
+            onChange={handleSelectChange}
+            required
+          >
+            <option value="">Select</option>
+            {ageOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Education Level */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Education Levels</label>
-          <input type="text" name="name" placeholder="Certificate" required />
+          <input
+            type="text"
+            name="education_level"
+            value={form.education_level}
+            onChange={handleChange}
+            placeholder="Certificate"
+            required
+          />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Languages */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Languages</label>
           <input
             type="text"
-            name="name"
+            name="languages"
+            value={form.languages}
+            onChange={handleChange}
             placeholder="English, Turkish"
             required
           />
         </div>
-
-        {/* <!-- Search Select --> */}
+        {/* Categories */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Categories </label>
           <Select
-            defaultValue={[catOptions[1]]}
             isMulti
-            name="colors"
+            name="categories"
             options={catOptions}
+            value={form.categories}
+            onChange={handleCategoriesChange}
             className="basic-multi-select"
             classNamePrefix="select"
             required
           />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Allow In Search & Listing */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Allow In Search & Listing</label>
-          <select className="chosen-single form-select" required>
-            <option>Yes</option>
-            <option>No</option>
+          <select
+            className="chosen-single form-select"
+            name="allow_in_listing"
+            value={form.allow_in_listing}
+            onChange={handleAllowChange}
+            required
+          >
+            {allowOptions.map((opt) => (
+              <option key={opt.value.toString()} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
         </div>
-
-        {/* <!-- About Company --> */}
+        {/* Description */}
         <div className="form-group col-lg-12 col-md-12">
           <label>Description</label>
-          <textarea placeholder="Spent several years working on sheep on Wall Street. Had moderate success investing in Yugo's on Wall Street. Managed a small team buying and selling Pogo sticks for farmers. Spent several years licensing licorice in West Palm Beach, FL. Developed several new methods for working it banjos in the aftermarket. Spent a weekend importing banjos in West Palm Beach, FL.In this position, the Software Engineer collaborates with Evention's Development team to continuously enhance our current software solutions as well as create new solutions to eliminate the back-office operations and management challenges present"></textarea>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Describe yourself"
+            required
+          />
         </div>
-
-        {/* <!-- Input --> */}
+        {/* Submit */}
         <div className="form-group col-lg-6 col-md-12">
-          <button type="submit" className="theme-btn btn-style-one">
-            Save
+          <button
+            type="submit"
+            className="theme-btn btn-style-one"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
