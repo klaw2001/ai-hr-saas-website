@@ -1,9 +1,6 @@
 
 'use client'
-import MobileMenu from "../../../header/MobileMenu";
-import DashboardHeader from "../../../header/DashboardHeader";
-import LoginPopup from "../../../common/form/login/LoginPopup";
-import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
+
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
 import ChatBox from "./components";
@@ -16,20 +13,6 @@ const Index = () => {
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
       {/* <!-- Header Span for hight --> */}
-
-      <LoginPopup />
-      {/* End Login Popup Modal */}
-
-      <DashboardHeader />
-      {/* End Header */}
-
-      <MobileMenu />
-      {/* End MobileMenu */}
-
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
-
-      {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
           <BreadCrumb title="Messages!" />
