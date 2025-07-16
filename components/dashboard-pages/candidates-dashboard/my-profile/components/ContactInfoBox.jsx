@@ -67,14 +67,6 @@ const ContactInfoBox = () => {
           <button className="theme-btn btn-style-three">Search Location</button>
         </div>
 
-        <div className="form-group col-lg-12 col-md-12">
-          <div className="map-outer">
-            <div style={{ height: "420px", width: "100%" }}>
-              <Map />
-            </div>
-          </div>
-        </div>
-        {/* End MapBox */}
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">

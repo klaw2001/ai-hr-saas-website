@@ -1,10 +1,10 @@
-
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
 import Resume from "./components";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
+import Link from "next/link";
 
 const index = () => {
   return (
@@ -20,7 +20,18 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="My Resume!" />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <BreadCrumb title="My Resume!" />
+            <Link href="/resume-generator">
+              <button
+                type="button"
+                className="btn btn-primary"
+                style={{ marginLeft: "1rem" }}
+              >
+                Generate AI Resume
+              </button>
+            </Link>
+          </div>
           {/* breadCrumb */}
 
           <MenuToggler />

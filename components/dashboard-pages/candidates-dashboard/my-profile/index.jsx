@@ -52,18 +52,6 @@ const index = () => {
               </div>
               {/* <!-- Ls widget --> */}
 
-              <div className="ls-widget">
-                <div className="tabs-box">
-                  <div className="widget-title">
-                    <h4>Contact Information</h4>
-                  </div>
-                  {/* End widget-title */}
-                  <div className="widget-content">
-                    <ContactInfoBox />
-                  </div>
-                </div>
-              </div>
-              {/* <!-- Ls widget --> */}
             </div>
           </div>
           {/* End .row */}
