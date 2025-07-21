@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import candidatesMenuData from "../../data/candidatesMenuData";
 import HeaderNavContent from "./HeaderNavContent";
 import { isActiveLink } from "../../utils/linkActiveChecker";
-
+import JobseekerServices from "@/apiServices/JobseekerServices";
 import { usePathname } from "next/navigation";
+
 const DashboardCandidatesHeader = () => {
   const [navbar, setNavbar] = useState(false);
+  const [profile, setProfile] = useState({});
 
   const changeBackground = () => {
     if (window.scrollY >= 0) {
@@ -21,7 +23,27 @@ const DashboardCandidatesHeader = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
+    return () => window.removeEventListener("scroll", changeBackground);
   }, []);
+
+  useEffect(() => {
+    // Fetch jobseeker profile for header avatar and name
+    const fetchProfile = async () => {
+      try {
+        const res = await JobseekerServices.getJobseekerProfile();
+        if ((res.data?.success || res.data?.status) && res.data.data) {
+          setProfile(res.data.data);
+        }
+      } catch (err) {
+        // fallback to nothing
+      }
+    };
+    fetchProfile();
+  }, []);
+
+
+  const avatar = profile.profile_logo || "/images/resource/candidate-1.png";
+  const name = profile.full_name || "My Account";
 
   return (
     // <!-- Main Header-->
@@ -55,7 +77,7 @@ const DashboardCandidatesHeader = () => {
 
           <div className="outer-box">
             <button className="menu-btn">
-              <span className="count">1</span>
+                  <span className="count">0</span>
               <span className="icon la la-heart-o"></span>
             </button>
             {/* wishlisted menu */}
@@ -64,6 +86,8 @@ const DashboardCandidatesHeader = () => {
               <span className="icon la la-bell"></span>
             </button>
             {/* End notification-icon */}
+
+           
 
             {/* <!-- Dashboard Option --> */}
             <div className="dropdown dashboard-option ">
@@ -74,11 +98,11 @@ const DashboardCandidatesHeader = () => {
                 <Image
                   alt="avatar"
                   className="thumb"
-                  src="/images/resource/candidate-1.png"
+                  src={avatar}
                   width={50}
                   height={50}
                 />
-                <span className="name">My Account</span>
+                <span className="name">{name}</span>
               </Link>
             </div>
             {/* End dropdown */}

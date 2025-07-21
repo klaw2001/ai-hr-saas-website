@@ -7,10 +7,12 @@ import ProfileIcon from "../common/ProfileIcon";
 import candidatesMenuData from "@/data/candidatesMenuData";
 import { isActiveLink } from "@/utils/linkActiveChecker";
 import { usePathname } from "next/navigation";
+import JobseekerServices from "@/apiServices/JobseekerServices";
 
 const DefaulHeader = () => {
   const [navbar, setNavbar] = useState(false);
   const [token, setToken] = useState(null);
+  const [profile, setProfile] = useState({});
 
   const pathname = usePathname();
   const changeBackground = () => {
@@ -26,7 +28,27 @@ const DefaulHeader = () => {
     setToken(
       typeof window !== "undefined" ? localStorage.getItem("token") : null
     );
+    return () => window.removeEventListener("scroll", changeBackground);
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      const fetchProfile = async () => {
+        try {
+          const res = await JobseekerServices.getJobseekerProfile();
+          if ((res.data?.success || res.data?.status) && res.data.data) {
+            setProfile(res.data.data);
+          }
+        } catch (err) {
+          // fallback to nothing
+        }
+      };
+      fetchProfile();
+    }
+  }, [token]);
+
+  const avatar = profile.profile_logo || "/images/resource/candidate-1.png";
+  const name = profile.full_name || "My Account";
 
   return (
     // <!-- Main Header-->
@@ -62,10 +84,6 @@ const DefaulHeader = () => {
           {/* <!-- Login/Register --> */}
           <div className="btn-box">
             {token ? (
-              // <Link href="/profile" className="profile-icon-link">
-              //   <ProfileIcon style={{ fontSize: 32 }} />
-              // </Link>
-
               <div className="dropdown dashboard-option ">
                 <Link
                   href="/candidates-dashboard/dashboard"
@@ -74,11 +92,11 @@ const DefaulHeader = () => {
                   <Image
                     alt="avatar"
                     className="thumb"
-                    src="/images/resource/candidate-1.png"
+                    src={avatar}
                     width={50}
                     height={50}
                   />
-                  <span className="name">My Account</span>
+                  <span className="name">{name}</span>
                 </Link>
               </div>
             ) : (

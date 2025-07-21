@@ -1,16 +1,20 @@
+'use client'
 import FormInfoBox from "./FormInfoBox";
 import LogoUpload from "./LogoUpload";
+import React, { useState } from "react";
 
-const index = () => {
+const Index = () => {
+  const [profileLogo, setProfileLogo] = useState("");
+
   return (
     <div className="widget-content">
-      <LogoUpload />
+      <LogoUpload onUpload={setProfileLogo} initialUrl={profileLogo} />
       {/* End logo and cover photo components */}
 
-      <FormInfoBox />
+      <FormInfoBox profileLogo={profileLogo} setProfileLogo={setProfileLogo} />
       {/* compnay info box */}
     </div>
   );
 };
 
-export default index;
+export default Index;

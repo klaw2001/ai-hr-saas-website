@@ -6,11 +6,11 @@ const JobListPage = () => {
     <>
       <span className="header-span"></span>
 
-      <section className="page-title style-three">
+      {/* <section className="page-title style-three">
         <div className="auto-container">
           <JobSearchForm />
         </div>
-      </section>
+      </section> */}
 
       <section className="ls-section style-three">
         <div className="auto-container">

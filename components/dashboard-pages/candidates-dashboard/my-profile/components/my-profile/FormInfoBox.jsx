@@ -38,7 +38,7 @@ const allowOptions = [
   { value: false, label: "No" },
 ];
 
-const FormInfoBox = () => {
+const FormInfoBox = ({ profileLogo, setProfileLogo }) => {
   const [form, setForm] = useState({
     full_name: "",
     job_title: "",
@@ -54,6 +54,7 @@ const FormInfoBox = () => {
     categories: [],
     allow_in_listing: true,
     description: "",
+    profile_logo: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -83,7 +84,11 @@ const FormInfoBox = () => {
               : [],
             allow_in_listing: data.allow_in_listing !== undefined ? data.allow_in_listing : true,
             description: data.description || "",
+            profile_logo: data.profile_logo || "",
           });
+          if (data.profile_logo) {
+            setProfileLogo(data.profile_logo);
+          }
         }
       } catch (err) {
         toast.error("Failed to fetch profile");
@@ -92,7 +97,12 @@ const FormInfoBox = () => {
       }
     };
     fetchProfile();
+    // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, profile_logo: profileLogo }));
+  }, [profileLogo]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -131,9 +141,10 @@ const FormInfoBox = () => {
       const payload = {
         ...form,
         categories: form.categories.map((cat) => cat.value),
+        profile_logo: profileLogo,
       };
       const res = await JobseekerServices.updateJobseekerProfile(payload);
-      if (res.data?.success) {
+      if (res.data?.success || res.data?.status) {
         toast.success("Profile updated successfully!");
       } else {
         toast.error(res.data?.message || "Failed to update profile");

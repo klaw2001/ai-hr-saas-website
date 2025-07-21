@@ -29,6 +29,11 @@ export default {
         return response;
     },
 
+    generateResumeArray: async (payload) => {
+        const response = await Api.post("/jobseeker/profile/generate-resume-array", payload);
+        return response;
+    },
+
     downloadResume: async (payload) => {
         const response = await Api.post("/jobseeker/profile/download-resume", payload);
         return response;
@@ -41,6 +46,10 @@ export default {
 
     scoreResume: async (payload) => {
         const response = await Api.post("/jobseeker/profile/score-resume", payload);
+        return response;
+    },
+    resetJobseekerPassword: async (payload) => {
+        const response = await Api.post("/jobseeker/profile/reset-password", payload);
         return response;
     },
 };
