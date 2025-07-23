@@ -52,4 +52,8 @@ export default {
         const response = await Api.post("/jobseeker/profile/reset-password", payload);
         return response;
     },
+    saveResume: async (payload) => {
+        const response = await Api.post("/jobseeker/profile/save-resume", payload);
+        return response;
+    },
 };
