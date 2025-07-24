@@ -46,6 +46,10 @@ api.interceptors.response.use(
   }
 );
 
+export const refreshTokenApi = async (refreshToken) => {
+  return api.post("/auth/refresh-token", { refreshToken });
+};
+
 function showErrorMessage(message) {
   // You can use a toast/notification library here
   console.error("Error:", message);

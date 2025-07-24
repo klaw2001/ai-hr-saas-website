@@ -223,11 +223,6 @@ const ResumeGen = () => {
   const [bulkEditPrompt, setBulkEditPrompt] = useState("");
   const [showBulkEditPopup, setShowBulkEditPopup] = useState(false);
 
-  const handleScoreResume = async () => {
-    const response = await JobseekerServices.scoreResume({ logId });
-    setScore(response.data.data.score);
-    setScoreReason(response.data.data.reason);
-  };
   const handleGenerate = async () => {
     setIsGenerating(true);
     setResumeHtml("");
@@ -245,8 +240,16 @@ const ResumeGen = () => {
     setResumeJson(dataArray.resume);
     setLogId(dataArray.log_id);
     setIsGenerating(false);
-    handleScoreResume();
+    // handleScoreResume(); // REMOVE this line
   };
+
+  // Score resume when resumeJson changes and is not null
+  React.useEffect(() => {
+    if (resumeJson) {
+      handleScoreResume();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeJson]);
 
   const handlePdfDownload = async () => {
     try {
@@ -364,6 +367,11 @@ const ResumeGen = () => {
     }
   };
 
+  const handleScoreResume = async () => {
+    const response = await JobseekerServices.scoreResume({ resumeJson });
+    setScore(response.data.data.score);
+    setScoreReason(response.data.data.reason);
+  };
   return (
     <div>
       <DashboardCandidatesHeader />
@@ -378,6 +386,67 @@ const ResumeGen = () => {
               padding: "2rem",
             }}
           >
+            {/* Resume Score Section - moved and restyled */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32, marginTop: 0
+            }}>
+              <div style={{
+                background: '#fff',
+                borderRadius: 16,
+                boxShadow: '0 2px 8px rgba(44, 62, 80, 0.07)',
+                padding: '24px 24px 0 24px',
+                width: '100%',
+                maxWidth: 320,
+                margin: '0 auto',
+                marginBottom: 16,
+                textAlign: 'center',
+              }}>
+                <div style={{ fontWeight: 600, fontSize: 18, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 12 }}>
+                  <span style={{ display: 'inline-block', fontSize: 20 }}>▦</span> Resume Score
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 16 }}>
+                  <div style={{
+                    position: 'relative',
+                    width: 140,
+                    height: 140,
+                    marginBottom: 8,
+                  }}>
+                    <svg width="140" height="140">
+                      <circle cx="70" cy="70" r="60" stroke="#e5e7eb" strokeWidth="14" fill="none" />
+                      <circle
+                        cx="70"
+                        cy="70"
+                        r="60"
+                        stroke="#22c55e"
+                        strokeWidth="14"
+                        fill="none"
+                        strokeDasharray={2 * Math.PI * 60}
+                        strokeDashoffset={2 * Math.PI * 60 * (1 - (score / 100))}
+                        strokeLinecap="round"
+                        style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(.4,0,.2,1)' }}
+                      />
+                    </svg>
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                      <div style={{ fontSize: 36, fontWeight: 700, color: '#22c55e', lineHeight: 1 }}>{score}</div>
+                      <div style={{ fontSize: 15, color: '#888' }}>out of 100</div>
+                      <div style={{ fontSize: 16, color: '#22c55e', fontWeight: 600, marginTop: 2 }}>Excellent</div>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            {/* End Resume Score Section */}
             <h2 style={{ fontSize: 20, marginBottom: 16 }}>Generate Resume</h2>
             <label
               style={{ fontWeight: 500, marginBottom: 8, display: "block" }}
@@ -442,7 +511,7 @@ const ResumeGen = () => {
               ))}
             </div>
             <div style={{ marginTop: 32, color: "#888", fontSize: 15 }}>
-              <div>Resume Score: {score}</div>
+              {/* <div>Resume Score: {score}</div> */}
               {scoreReason && (
                 <button
                   type="button"
@@ -541,12 +610,29 @@ const ResumeGen = () => {
                 border: "1px dashed #ccc",
                 borderRadius: 8,
                 position: "relative",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              {!resumeJson ? (
-                <div style={{ textAlign: "center", color: "#bbb" }}>
+              {isGenerating ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    border: '5px solid #e5e7eb',
+                    borderTop: '5px solid #2563eb',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                    marginBottom: 16
+                  }} />
+                  <style>{`@keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }`}</style>
+                  <div style={{ color: '#2563eb', fontWeight: 500, fontSize: 18 }}>Generating your resume...</div>
+                </div>
+              ) : !resumeJson ? (
+                <div style={{ textAlign: "center", color: "#bbb", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                   <FaRegFileAlt size={48} style={{ marginBottom: 12 }} />
-                  <div>Enter a prompt to generate your resume</div>
+                  <div style={{ fontSize: 18, fontWeight: 500 }}>Enter a prompt to generate your resume.</div>
                 </div>
               ) : (
                 <ResumePreview

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { refreshTokenApi } from "@/apiServices/Api";
 
 const API = 'http://localhost:8000/api'; // your backend URL
 
@@ -33,6 +34,25 @@ export const login = createAsyncThunk(
       }
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login error");
+    }
+  }
+);
+
+export const refreshToken = createAsyncThunk(
+  "auth/refreshToken",
+  async (refreshTokenValue, { rejectWithValue }) => {
+    try {
+      const res = await refreshTokenApi(refreshTokenValue);
+      if (res.data.status && res.data.data.token) {
+        // Optionally handle new refresh token if backend returns it
+        return {
+          token: res.data.data.token,
+        };
+      } else {
+        return rejectWithValue(res.data.message || "Token refresh failed");
+      }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Token refresh error");
     }
   }
 );
@@ -74,6 +94,20 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";
+      })
+      // Refresh token cases
+      .addCase(refreshToken.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(refreshToken.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Token refresh failed";
       });
   },
 });
