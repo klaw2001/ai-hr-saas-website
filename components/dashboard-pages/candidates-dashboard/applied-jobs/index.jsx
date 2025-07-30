@@ -11,7 +11,7 @@ const index = () => {
       <span className="header-span"></span>
       {/* <!-- Header Span for hight --> */}
 
-      {/* <DashboardCandidatesHeader /> */}
+      <DashboardCandidatesHeader />
       {/* End Header */}
 
       <DashboardCandidatesSidebar />

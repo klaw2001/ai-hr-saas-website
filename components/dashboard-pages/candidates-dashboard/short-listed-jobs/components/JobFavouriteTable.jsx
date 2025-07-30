@@ -51,6 +51,13 @@ const JobFavouriteTable = () => {
               </thead>
 
               <tbody>
+                {jobs.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="text-center">
+                      <h3>No jobs found</h3>
+                    </td>
+                  </tr>
+                )}
                 {jobs.map((item) => {
                   // item: jobs_shortlisted, item.job: job
                   const job = item.job || {};

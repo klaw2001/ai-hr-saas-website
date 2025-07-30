@@ -56,4 +56,24 @@ export default {
         const response = await Api.post("/jobseeker/profile/save-resume", payload);
         return response;
     },
+
+    getAllSavedResumes: async () => {
+        const response = await Api.get("/jobseeker/profile/get-saved-resumes");
+        return response;
+    },
+
+    getSingleSavedResume: async (id) => {
+        const response = await Api.get(`/jobseeker/profile/get-saved-resume/${id}`);
+        return response;
+    },
+ 
+    updateSavedResumeManually: async (payload) => {
+        const response = await Api.post("/jobseeker/profile/update-resume-manually", payload);
+        return response;
+    },
+
+    downloadResumeWithStyling: async (payload) => {
+        const response = await Api.post("/jobseeker/profile/download-resume-styled", payload);
+        return response;
+    }
 };

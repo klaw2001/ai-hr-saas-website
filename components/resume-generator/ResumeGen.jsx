@@ -5,6 +5,8 @@ import JobseekerServices from "@/apiServices/JobseekerServices";
 import DashboardCandidatesHeader from "../header/DashboardCandidatesHeader";
 import DashboardCandidatesSidebar from "../header/DashboardCandidatesSidebar";
 import BreadCrumb from "../dashboard-pages/BreadCrumb";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const examplePrompts = [
   "I'm Rahul Mehta, a full-stack developer based in Bangalore. I have 4 years of experience working with JavaScript, React, Node.js, and PostgreSQL. I currently work at TuringTech since 2022, where I built a scalable dashboard system for managing client analytics. Before that, I was at DevCrate from 2020 to 2022 as a junior developer. I completed my B.Tech in Computer Engineering from VIT in 2019. I’ve also built a personal budgeting app using Next.js and Firebase. My key skills include React, Node.js, Git, Docker, and AWS. I’m certified in AWS Developer Associate. You can reach me at rahul.m@email.com or 9876543210.",
@@ -222,7 +224,10 @@ const ResumeGen = () => {
   const [bulkEditSection, setBulkEditSection] = useState(null); // { section, currentText, tagLabel }
   const [bulkEditPrompt, setBulkEditPrompt] = useState("");
   const [showBulkEditPopup, setShowBulkEditPopup] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [resumeName, setResumeName] = useState("");
 
+  const router = useRouter();
   const handleGenerate = async () => {
     setIsGenerating(true);
     setResumeHtml("");
@@ -354,13 +359,31 @@ const ResumeGen = () => {
   };
 
   const handleTopConfirm = async () => {
+    setShowNameModal(true);
+  };
+
+  const handleSaveResumeWithName = async () => {
+    if (!resumeName.trim()) {
+      toast.error('Please enter a resume name.');
+      return;
+    }
+    
     try {
-      const response = await JobseekerServices.saveResume({ resume_obj: JSON.stringify(resumeJson) });
+      const response = await JobseekerServices.saveResume({ 
+        resume_obj: JSON.stringify(resumeJson),
+        jr_name: resumeName,
+        jr_score: score,
+        jr_score_reason: scoreReason
+      });
+      
       if (response.data && response.data.status) {
         toast.success('Resume saved successfully!');
-        setShowTopEdit(false); // Optionally hide edit mode
+        setShowTopEdit(false);
+        setShowNameModal(false);
+        setResumeName("");
+        router.push('/candidates-dashboard/dashboard');
       } else {
-        alert('Failed to save resume.');
+        toast.error('Failed to save resume.');
       }
     } catch (err) {
       toast.error('Error saving resume.');
@@ -951,6 +974,87 @@ const ResumeGen = () => {
                 onClick={() => setShowReasonModal(false)}
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Resume Name Modal */}
+      {showNameModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1200,
+          }}
+          onClick={() => setShowNameModal(false)}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: 24,
+              borderRadius: 8,
+              minWidth: 350,
+              maxWidth: 450,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h5 style={{ marginBottom: 16 }}>Save Resume</h5>
+            <div style={{ marginBottom: 16 }}>
+              <label htmlFor="resume-name" style={{ fontWeight: 500, marginBottom: 8, display: 'block' }}>
+                Resume Name *
+              </label>
+              <input
+                id="resume-name"
+                type="text"
+                value={resumeName}
+                onChange={(e) => setResumeName(e.target.value)}
+                placeholder="e.g., Software Engineer Resume, Marketing Manager CV"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: 6,
+                  border: '1px solid #ccc',
+                  fontSize: 16,
+                }}
+                autoFocus
+              />
+            </div>
+            <div style={{ marginBottom: 16, padding: 12, background: '#f8f9fa', borderRadius: 6 }}>
+              <div style={{ fontWeight: 500, marginBottom: 8 }}>Resume Score: {score}/100</div>
+              {scoreReason && (
+                <div style={{ fontSize: 14, color: '#666' }}>
+                  <strong>Score Reason:</strong> {scoreReason}
+                </div>
+              )}
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowNameModal(false);
+                  setResumeName("");
+                }}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={handleSaveResumeWithName}
+                disabled={!resumeName.trim()}
+                style={{ flex: 1 }}
+              >
+                Save Resume
               </button>
             </div>
           </div>

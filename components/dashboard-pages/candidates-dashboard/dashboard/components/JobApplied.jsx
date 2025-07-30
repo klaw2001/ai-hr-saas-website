@@ -35,6 +35,11 @@ const JobApplied = () => {
 
   return (
     <>
+      {jobs.length === 0 && (
+        <div className="col-lg-12 col-md-12 text-center mt-5">
+          <h3>No applied jobs found</h3>
+        </div>
+      )}
       {jobs.slice(0, 6).map((item) => (
         <div className="job-block col-lg-6 col-md-12 col-sm-12" key={item.id || item.job_id}>
           <div className="inner-box">
