@@ -20,7 +20,7 @@ const FormContent = () => {
 
   useEffect(() => {
     if (token) {
-      router.push("/"); // or wherever you want to redirect
+      router.push("/candidates-dashboard/dashboard"); // or wherever you want to redirect
     }
   }, [token]);
 
@@ -34,8 +34,13 @@ const FormContent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login(formData)).unwrap();
-      router.push("/");
+      const res = await dispatch(login(formData)).unwrap();
+      if (res.token) {
+        router.push("/candidates-dashboard/dashboard");
+        return;
+      }
+      console.log('here');
+      router.push("/login");
     } catch (err) {
       console.error("Login failed:", err);
     }

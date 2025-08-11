@@ -75,5 +75,15 @@ export default {
     downloadResumeWithStyling: async (payload) => {
         const response = await Api.post("/jobseeker/profile/download-resume-styled", payload);
         return response;
+    },
+
+    getJobseekerDashboard: async (payload) => {
+        const response = await Api.get("/jobseeker/dashboard", { params: payload });
+        return response
+    },
+
+    getJobseekerDashboardStats: async (payload) => {
+        const response = await Api.get("/jobseeker/dashboard/stats", { params: payload })
+        return response
     }
 };

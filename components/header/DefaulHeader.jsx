@@ -75,7 +75,7 @@ const DefaulHeader = () => {
           </div>
           {/* End .logo-box */}
 
-          <HeaderNavContent />
+          <HeaderNavContent hideNavigation={token && pathname === "/jobs"} />
           {/* <!-- Main Menu End--> */}
         </div>
         {/* End .nav-outer */}

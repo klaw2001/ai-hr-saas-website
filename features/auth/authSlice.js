@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { refreshTokenApi } from "@/apiServices/Api";
+import { useRouter } from 'next/navigation';
 
 const API = 'http://localhost:8000/api'; // your backend URL
 
@@ -25,6 +26,7 @@ export const login = createAsyncThunk(
 
       // Check for your backend structure
       if (res.data.status && res.data.data.token) {
+        localStorage.setItem("token", res.data.data.token);
         return {
           token: res.data.data.token,
           role: res.data.data.role,
@@ -71,11 +73,18 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       localStorage.removeItem("token");
-      localStorage.removeItem("role");
     },
     loginSuccess: (state, action) => {
       state.token = action.payload.token;
       state.role = action.payload.role;
+    },
+    initializeAuth: (state) => {
+      const storedToken = localStorage.getItem("token");
+      const storedRole = localStorage.getItem("role");
+      if (storedToken && storedRole) {
+        state.token = storedToken;
+        state.role = storedRole;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -112,7 +121,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, loginSuccess } = authSlice.actions;
+export const { logout, loginSuccess, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;
 
 

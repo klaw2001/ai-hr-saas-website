@@ -53,7 +53,7 @@ const DashboardHeader = () => {
                         </div>
                         {/* End .logo-box */}
 
-                        <HeaderNavContent />
+                        <HeaderNavContent hideNavigation={true} />
                         {/* <!-- Main Menu End--> */}
                     </div>
                     {/* End .nav-outer */}

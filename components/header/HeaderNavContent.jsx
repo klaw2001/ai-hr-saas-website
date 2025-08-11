@@ -2,7 +2,11 @@
 
 import Link from "next/link";
 
-const HeaderNavContent = () => {
+const HeaderNavContent = ({ hideNavigation = false }) => {
+  if (hideNavigation) {
+    return null;
+  }
+
   return (
     <nav className="main-menu">
       <ul className="navigation">

@@ -57,7 +57,7 @@ const DashboardCandidatesHeader = () => {
           <div className="nav-outer">
             <div className="logo-box">
               <div className="logo">
-                <Link href="/">
+                <Link href={profile && profile.jobseeker_id ? "/candidates-dashboard/dashboard" : "/"}>
                   <Image
                     alt="brand"
                     src="/images/logo.svg"
@@ -70,7 +70,7 @@ const DashboardCandidatesHeader = () => {
             </div>
             {/* End .logo-box */}
 
-            <HeaderNavContent />
+            <HeaderNavContent hideNavigation={true} />
             {/* <!-- Main Menu End--> */}
           </div>
           {/* End .nav-outer */}
